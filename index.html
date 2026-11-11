@@ -1,1 +1,191 @@
 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İnsanlığın Tek Kitabı</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      background: linear-gradient(145deg, #080d20, #18254a, #090d1b);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      padding: 38px 24px;
+      border: 1px solid #ffffff25;
+      border-radius: 22px;
+      background: #ffffff0b;
+      box-shadow: 0 15px 50px #0005;
+    }
+    .globe { font-size: 48px; }
+    h1 { font-size: 34px; margin: 16px 0; }
+    .subtitle {
+      color: #c7d2ef;
+      line-height: 1.7;
+      font-size: 17px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #ffffff40;
+      background: #101a35;
+      color: white;
+      font-size: 16px;
+      resize: vertical;
+    }
+    button, select {
+      padding: 13px 20px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button {
+      background: #b9a0ff;
+      color: #11152b;
+      font-weight: bold;
+    }
+    button:hover { background: #d0c1ff; }
+    select { background: #fff; color: #111; }
+    .note { color: #aebbd9; font-size: 13px; margin-top: 18px; }
+    .message { margin-top: 18px; color: #c9f7d4; }
+    .contribution {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #ffffff12;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="globe">🌍</div>
+    <h1 id="title">İnsanlığın Tek Kitabı</h1>
+    <p class="subtitle" id="description">
+      Her insanın yalnızca bir cümleyle katkıda bulunduğu,
+      insanlığın ortak kitabı.
+    </p>
+
+    <select id="language" onchange="changeLanguage()">
+      <option value="tr">Türkçe</option>
+      <option value="en">English</option>
+    </select>
+
+    <textarea id="sentence" maxlength="300"
+      placeholder="Dünyaya söylemek istediğin tek cümleyi yaz..."></textarea>
+
+    <br>
+    <button id="submit" onclick="addSentence()">Cümlemi paylaş</button>
+
+    <p class="note" id="note">
+      Her kişi yalnızca bir cümle paylaşabilir.
+    </p>
+
+    <p class="message" id="message"></p>
+    <div id="contributions"></div>
+  </main>
+
+  <script>
+    const translations = {
+      tr: {
+        title: "İnsanlığın Tek Kitabı",
+        description: "Her insanın yalnızca bir cümleyle katkıda bulunduğu, insanlığın ortak kitabı.",
+        placeholder: "Dünyaya söylemek istediğin tek cümleyi yaz...",
+        submit: "Cümlemi paylaş",
+        note: "Her kişi yalnızca bir cümle paylaşabilir.",
+        empty: "Lütfen bir cümle yaz.",
+        success: "Cümlen bu tarayıcıya kaydedildi.",
+        again: "Bu tarayıcıdan zaten bir cümle paylaşılmış.",
+        heading: "Paylaşılan cümleler"
+      },
+      en: {
+        title: "Humanity's One Book",
+        description: "A shared book of humanity, where every person contributes just one sentence.",
+        placeholder: "Write the one sentence you want to share with the world...",
+        submit: "Share my sentence",
+        note: "Each person can contribute only one sentence.",
+        empty: "Please write a sentence.",
+        success: "Your sentence has been saved in this browser.",
+        again: "A sentence has already been shared from this browser.",
+        heading: "Shared sentences"
+      }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById("language").value;
+      const t = translations[lang];
+      document.documentElement.lang = lang;
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("description").textContent = t.description;
+      document.getElementById("sentence").placeholder = t.placeholder;
+      document.getElementById("submit").textContent = t.submit;
+      document.getElementById("note").textContent = t.note;
+      showSentences();
+    }
+
+    function addSentence() {
+      const lang = document.getElementById("language").value;
+      const t = translations[lang];
+      const input = document.getElementById("sentence");
+      const message = document.getElementById("message");
+      const sentence = input.value.trim();
+
+      if (!sentence) {
+        message.textContent = t.empty;
+        return;
+      }
+
+      if (localStorage.getItem("humanity_sentence")) {
+        message.textContent = t.again;
+        return;
+      }
+
+      localStorage.setItem("humanity_sentence", sentence);
+      message.textContent = t.success;
+      input.value = "";
+      showSentences();
+    }
+
+    function showSentences() {
+      const lang = document.getElementById("language").value;
+      const t = translations[lang];
+      const saved = localStorage.getItem("humanity_sentence");
+      const area = document.getElementById("contributions");
+
+      area.innerHTML = "";
+
+      if (saved) {
+        const heading = document.createElement("h3");
+        heading.textContent = t.heading;
+
+        const item = document.createElement("div");
+        item.className = "contribution";
+        item.textContent = saved;
+
+        area.appendChild(heading);
+        area.appendChild(item);
+      }
+    }
+
+    showSentences();
+  </script>
+</body>
+</html>
+
